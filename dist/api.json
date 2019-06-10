@@ -67,7 +67,7 @@
         "tags": [
           "user"
         ],
-        "summary": "Logs user into the system",
+        "summary": "Sign in the system",
         "description": "",
         "operationId": "loginUser",
         "produces": [
@@ -119,7 +119,7 @@
         "tags": [
           "user"
         ],
-        "summary": "Logs out current logged in user session",
+        "summary": "Sign out current logged-in user session",
         "description": "",
         "operationId": "logoutUser",
         "produces": [
@@ -161,7 +161,7 @@
             }
           },
           "400": {
-            "description": "Invalid username supplied"
+            "description": "Invalid email supplied"
           },
           "404": {
             "description": "User not found"
@@ -173,7 +173,7 @@
           "user"
         ],
         "summary": "Update user",
-        "description": "This can only be done by the logged in user.",
+        "description": "This can only be done by the logged-in user.",
         "operationId": "updateUser",
         "produces": [
           "application/json"
@@ -198,7 +198,7 @@
         ],
         "responses": {
           "400": {
-            "description": "Invalid user supplied"
+            "description": "Invalid email supplied"
           },
           "404": {
             "description": "User not found"
@@ -210,7 +210,7 @@
           "user"
         ],
         "summary": "Delete user",
-        "description": "This can only be done by the logged in user.",
+        "description": "This can only be done by the logged-in user.",
         "operationId": "deleteUser",
         "produces": [
           "application/json"
@@ -226,7 +226,7 @@
         ],
         "responses": {
           "400": {
-            "description": "Invalid username supplied"
+            "description": "Invalid email supplied"
           },
           "404": {
             "description": "User not found"
@@ -234,14 +234,14 @@
         }
       }
     },
-    "/payments/add": {
+    "/emails/send": {
       "post": {
         "tags": [
-          "payment"
+          "email"
         ],
-        "summary": "Create payment",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "createPayment",
+        "summary": "Send email activation code",
+        "description": "",
+        "operationId": "emailSend",
         "produces": [
           "application/json"
         ],
@@ -252,7 +252,7 @@
             "description": "Created payment object",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Payment"
+              "$ref": "#/definitions/Email"
             }
           }
         ],
@@ -260,7 +260,7 @@
           "200": {
             "description": "Successful operation",
             "schema": {
-              "$ref": "#/definitions/Payment"
+              "$ref": "#/definitions/Email"
             }
           },
           "400": {
@@ -275,114 +275,21 @@
         }
       }
     },
-    "/payments/{paymentID}": {
-      "get": {
-        "tags": [
-          "payment"
-        ],
-        "summary": "Get payment by ID",
-        "description": "Returns a single payment",
-        "operationId": "getPaymentByID",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "paymentID",
-            "description": "ID of payment that needs to be fetched",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "schema": {
-              "$ref": "#/definitions/Payment"
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Payment not found"
-          }
-        }
-      },
+    "/emails/activation": {
       "put": {
         "tags": [
-          "payment"
+          "email"
         ],
-        "summary": "Update an existing payment",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "updatePayment",
+        "summary": "Verify email activation code",
+        "operationId": "emailActivate",
         "produces": [
           "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "paymentID",
-            "description": "ID of payment that needs to be updated",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Payment object that needs to be updated",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Payment"
-              }
-            }
-          }
         ],
         "responses": {
           "200": {
             "description": "Successful operation",
             "schema": {
-              "$ref": "#/definitions/Payment"
-            }
-          },
-          "400": {
-            "description": "Invalid payment supplied"
-          },
-          "404": {
-            "description": "Payment not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "payment"
-        ],
-        "summary": "Delete payment by ID",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "deletePayment",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "paymentID",
-            "description": "ID of payment that needs to be deleted",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "schema": {
-              "$ref": "#/definitions/Payment"
+              "$ref": "#/definitions/Email"
             }
           },
           "400": {
@@ -419,18 +326,21 @@
           "description": "last_name"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "format": "email",
+          "description": "unique"
         },
         "phone": {
           "type": "string",
           "description": "tel"
         },
-        "dateOfBirth": {
+        "birthday": {
           "type": "string",
           "description": "date_of_birth"
         },
         "ssn": {
           "type": "string",
+          "pattern": "^\\d{3}-\\d{2}-\\d{4}$",
           "description": "social_security_number"
         },
         "country": {
@@ -442,15 +352,20 @@
         },
         "city": {
           "type": "string",
-          "description": "City"
+          "description": "city"
         },
         "street": {
           "type": "string",
-          "description": "Address under a city"
+          "description": "address under a city"
         },
         "zip": {
           "type": "string",
           "description": "zip_code"
+        },
+        "passport": {
+          "type": "string",
+          "format": "byte",
+          "description": "image of passport"
         },
         "created": {
           "type": "string",
@@ -467,76 +382,31 @@
         "name": "User"
       }
     },
-    "Payment": {
+    "Email": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64",
-          "description": "payment_id: unique, hash"
-        },
-        "companyCode": {
-          "type": "integer",
-          "format": "int32",
-          "description": "company_code: smallint NOT NULL"
-        },
-        "paymentStatus": {
-          "type": "string",
-          "description": "Payment Status"
-        },
-        "currency": {
-          "type": "string"
-        },
-        "subtotal": {
-          "type": "integer",
-          "format": "int32",
-          "description": "base_price_amount: int unsigned"
-        },
-        "shipping": {
-          "type": "integer",
-          "format": "int32",
-          "description": "transportation_fee: int unsigned"
-        },
-        "commission": {
-          "type": "integer",
-          "format": "int32",
-          "description": "commission: int unsigned"
-        },
-        "firstName": {
-          "type": "string",
-          "description": "first_name"
-        },
-        "lastName": {
-          "type": "string",
-          "description": "last_name"
-        },
         "email": {
-          "type": "string"
-        },
-        "phone": {
           "type": "string",
-          "description": "tel"
+          "format": "email",
+          "description": "email: unique"
         },
-        "wallet": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
-        "deadline": {
+        "code": {
           "type": "string",
-          "format": "date-time",
-          "description": "payment_limit_date: Japan timezone"
+          "description": "activation code: random numbers with lowercase characters. string length: 6"
+        },
+        "status": {
+          "type": "boolean",
+          "description": "email activation status"
         },
         "created": {
           "type": "string",
           "format": "date-time",
-          "description": "create_timestamp: Japan timezone"
+          "description": "create_timestamp: Taiwan timezone"
         },
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "update_timestamp: Japan timezone"
+          "description": "update_timestamp: Taiwan timezone"
         }
       },
       "xml": {
