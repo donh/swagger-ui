@@ -17,18 +17,18 @@ tags:
     externalDocs:
       description: "Find out more"
       url: "http://dev.idhub.network:3274/"
-  - name: payment
-    description: Access to payments
+  - name: "email"
+    description: "Operations about emails"
 schemes:
   - "https"
   - "http"
 paths:
-  /users/add:
+  /users:
     post:
       tags:
         - "user"
       summary: "Create user"
-      description: "This can only be done by the logged in user."
+      description: ""
       operationId: "createUser"
       produces:
         - "application/json"
@@ -46,7 +46,7 @@ paths:
     get:
       tags:
         - "user"
-      summary: "Logs user into the system"
+      summary: "Sign in the system"
       description: ""
       operationId: "loginUser"
       produces:
@@ -82,7 +82,7 @@ paths:
     get:
       tags:
         - "user"
-      summary: "Logs out current logged in user session"
+      summary: "Sign out current logged-in user session"
       description: ""
       operationId: "logoutUser"
       produces:
@@ -112,14 +112,14 @@ paths:
           schema:
             $ref: "#/definitions/User"
         400:
-          description: "Invalid username supplied"
+          description: "Invalid email supplied"
         404:
           description: "User not found"
     put:
       tags:
         - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
+      summary: "Update user"
+      description: "This can only be done by the logged-in user."
       operationId: "updateUser"
       produces:
         - "application/json"
@@ -137,14 +137,14 @@ paths:
             $ref: "#/definitions/User"
       responses:
         400:
-          description: "Invalid user supplied"
+          description: "Invalid email supplied"
         404:
           description: "User not found"
     delete:
       tags:
         - "user"
       summary: "Delete user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by the logged-in user."
       operationId: "deleteUser"
       produces:
         - "application/json"
@@ -156,116 +156,53 @@ paths:
           type: "string"
       responses:
         400:
-          description: "Invalid username supplied"
+          description: "Invalid email supplied"
         404:
           description: "User not found"
-  /payments/add:
+  /emails/send:
     post:
       tags:
-      - "payment"
-      summary: "Create payment"
-      description: "This can only be done by the logged in user."
-      operationId: "createPayment"
+      - "email"
+      summary: "Send email activation code"
+      description: ""
+      operationId: "emailSend"
       produces:
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "Created payment object"
+        description: ""
         required: true
         schema:
-          $ref: "#/definitions/Payment"
+          $ref: "#/definitions/Email"
       responses:
         200:
           description: "Successful operation"
           schema:
-            $ref: "#/definitions/Payment"
+            $ref: "#/definitions/Email"
         400:
-          description: "Invalid Payment"
+          description: "Invalid email"
         404:
-          description: "Payment not found"
+          description: "Email not found"
         405:
           description: "Validation exception"
-  /payments/{paymentID}:
-    get:
-      tags:
-        - "payment"
-      summary: "Get payment by ID"
-      description: "Returns a single payment"
-      operationId: "getPaymentByID"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "path"
-          name: "paymentID"
-          description: "ID of payment that needs to be fetched"
-          required: true
-          type: "string"
-      responses:
-        200:
-          description: "Successful operation"
-          schema:
-            $ref: "#/definitions/Payment"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Payment not found"
+  /emails/activation:
     put:
       tags:
-        - "payment"
-      summary: "Update an existing payment"
-      description: "This can only be done by the logged in user."
-      operationId: "updatePayment"
+        - "email"
+      summary: "Verify email activation code"
+      operationId: "emailActivate"
       produces:
         - "application/json"
-      parameters:
-        - in: "path"
-          name: "paymentID"
-          description: "ID of payment that needs to be updated"
-          required: true
-          type: "string"
-        - in: "body"
-          name: "body"
-          description: "Payment object that needs to be updated"
-          required: true
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Payment"
       responses:
         200:
           description: "Successful operation"
           schema:
-            $ref: "#/definitions/Payment"
+            $ref: "#/definitions/Email"
         400:
-          description: "Invalid payment supplied"
+          description: "Invalid activation supplied"
         404:
-          description: "Payment not found"
-        405:
-          description: "Validation exception"
-    delete:
-      tags:
-        - "payment"
-      summary: "Delete payment by ID"
-      description: "This can only be done by the logged in user."
-      operationId: "deletePayment"
-      produces:
-        - "application/json"
-      parameters:
-        - in: "path"
-          name: "paymentID"
-          description: "ID of payment that needs to be deleted"
-          required: true
-          type: "string"
-      responses:
-        200:
-          description: "Successful operation"
-          schema:
-            $ref: "#/definitions/Payment"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Payment not found"
+          description: "Email not found"
 securityDefinitions:
   api_key:
     type: "apiKey"
@@ -278,8 +215,6 @@ definitions:
       id:
         type: "integer"
         format: "int64"
-      username:
-        type: "string"
       firstName:
         type: "string"
         description: "first_name"
@@ -288,97 +223,69 @@ definitions:
         description: "last_name"
       email:
         type: "string"
+        format: "email"
+        description: "unique"
       phone:
         type: "string"
         description: "tel"
+      birthday:
+        type: "string"
+        description: "date_of_birth"
+      ssn:
+        type: "string"
+        pattern: '^\d{3}-\d{2}-\d{4}$'
+        description: "social_security_number"
       country:
         type: "string"
       region:
-        type: "integer"
-        format: "int32"
-        description: "Prefecture number"
+        type: "string"
+        description: "state"
       city:
         type: "string"
-        description: "City"
+        description: "city"
       street:
         type: "string"
-        description: "Address under a city"
+        description: "address under a city"
       zip:
         type: "string"
         description: "zip_code"
-      publicKey:
+      passport:
         type: "string"
-      wallet:
-        type: "string"
-      proxy:
-        type: "string"
+        format: "byte"    # base64-encoded file contents
+        description: "image of passport"
       created:
         type: "string"
         format: "date-time"
-        description: "create_timestamp: Japan timezone"
+        description: "create_timestamp: Taiwan timezone"
       updated:
         type: "string"
         format: "date-time"
-        description: "updated_timestamp: Japan timezone"
+        description: "updated_timestamp: Taiwan timezone"
     xml:
       name: "User"
-  Payment:
+  Email:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
-        description: "payment_id: unique, hash"
-      companyCode:
-        type: "integer"
-        format: "int32"
-        description: "company_code: smallint NOT NULL"
-      paymentStatus:
-        type: "string"
-        description: "Payment Status"
-      currency:
-        type: "string"
-      subtotal:
-        type: "integer"
-        format: "int32"
-        description: "base_price_amount: int unsigned"
-      shipping:
-        type: "integer"
-        format: "int32"
-        description: "transportation_fee: int unsigned"
-      commission:
-        type: "integer"
-        format: "int32"
-        description: "commission: int unsigned"
-      firstName:
-        type: "string"
-        description: "first_name"
-      lastName:
-        type: "string"
-        description: "last_name"
       email:
         type: "string"
-      phone:
+        format: "email"
+        description: "email: unique"
+      code:
         type: "string"
-        description: "tel"
-      wallet:
-        type: "string"
-      note:
-        type: "string"
-      deadline:
-        type: "string"
-        format: "date-time"
-        description: "payment_limit_date: Japan timezone"
+        description: "activation code: random numbers with lowercase characters. string length: 6"
+      status:
+        type: "boolean"
+        description: "email activation status"
       created:
         type: "string"
         format: "date-time"
-        description: "create_timestamp: Japan timezone"
+        description: "create_timestamp: Taiwan timezone"
       updated:
         type: "string"
         format: "date-time"
-        description: "update_timestamp: Japan timezone"
+        description: "update_timestamp: Taiwan timezone"
     xml:
-      name: Payment
+      name: Email
   ApiResponse:
     type: "object"
     properties:

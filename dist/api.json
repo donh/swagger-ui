@@ -24,8 +24,8 @@
       }
     },
     {
-      "name": "payment",
-      "description": "Access to payments"
+      "name": "email",
+      "description": "Operations about emails"
     }
   ],
   "schemes": [
@@ -249,7 +249,7 @@
           {
             "in": "body",
             "name": "body",
-            "description": "Created payment object",
+            "description": "",
             "required": true,
             "schema": {
               "$ref": "#/definitions/Email"
@@ -264,10 +264,10 @@
             }
           },
           "400": {
-            "description": "Invalid Payment"
+            "description": "Invalid email"
           },
           "404": {
-            "description": "Payment not found"
+            "description": "Email not found"
           },
           "405": {
             "description": "Validation exception"
@@ -293,10 +293,10 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid activation supplied"
           },
           "404": {
-            "description": "Payment not found"
+            "description": "Email not found"
           }
         }
       }
@@ -410,7 +410,7 @@
         }
       },
       "xml": {
-        "name": "Payment"
+        "name": "Email"
       }
     },
     "ApiResponse": {
