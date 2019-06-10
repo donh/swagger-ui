@@ -1,0 +1,571 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server IDHub server. For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "version": "1.0.0",
+    "title": "IDHub API Draft",
+    "contact": {
+      "email": "don@idhub.network"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "dev.idhub.network:5906",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations about users",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://dev.idhub.network:3274/"
+      }
+    },
+    {
+      "name": "payment",
+      "description": "Access to payments"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/users/add": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Create user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Logs user into the system",
+        "description": "",
+        "operationId": "loginUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "The email for login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password for login in clear text",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "X-Rate-Limit": {
+                "type": "integer",
+                "format": "int32",
+                "description": "calls per hour allowed by the user"
+              },
+              "X-Expires-After": {
+                "type": "string",
+                "format": "date-time",
+                "description": "date in UTC when token expires"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username/password supplied"
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Logs out current logged in user session",
+        "description": "",
+        "operationId": "logoutUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/users/{email}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user by email",
+        "description": "",
+        "operationId": "getUserByEmail",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "The email that needs to be fetched. Use user1 for testing.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Updated user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updateUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "email that need to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid user supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Delete user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "deleteUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "The email that needs to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/payments/add": {
+      "post": {
+        "tags": [
+          "payment"
+        ],
+        "summary": "Create payment",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createPayment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created payment object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "description": "Invalid Payment"
+          },
+          "404": {
+            "description": "Payment not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/payments/{paymentID}": {
+      "get": {
+        "tags": [
+          "payment"
+        ],
+        "summary": "Get payment by ID",
+        "description": "Returns a single payment",
+        "operationId": "getPaymentByID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentID",
+            "description": "ID of payment that needs to be fetched",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Payment not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "payment"
+        ],
+        "summary": "Update an existing payment",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updatePayment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentID",
+            "description": "ID of payment that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Payment object that needs to be updated",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Payment"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "description": "Invalid payment supplied"
+          },
+          "404": {
+            "description": "Payment not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "payment"
+        ],
+        "summary": "Delete payment by ID",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "deletePayment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentID",
+            "description": "ID of payment that needs to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Payment"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Payment not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "first_name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "last_name"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string",
+          "description": "tel"
+        },
+        "country": {
+          "type": "string"
+        },
+        "region": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Prefecture number"
+        },
+        "city": {
+          "type": "string",
+          "description": "City"
+        },
+        "street": {
+          "type": "string",
+          "description": "Address under a city"
+        },
+        "zip": {
+          "type": "string",
+          "description": "zip_code"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "wallet": {
+          "type": "string"
+        },
+        "proxy": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "create_timestamp: Japan timezone"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "updated_timestamp: Japan timezone"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    },
+    "Payment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "payment_id: unique, hash"
+        },
+        "companyCode": {
+          "type": "integer",
+          "format": "int32",
+          "description": "company_code: smallint NOT NULL"
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "Payment Status"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "subtotal": {
+          "type": "integer",
+          "format": "int32",
+          "description": "base_price_amount: int unsigned"
+        },
+        "shipping": {
+          "type": "integer",
+          "format": "int32",
+          "description": "transportation_fee: int unsigned"
+        },
+        "commission": {
+          "type": "integer",
+          "format": "int32",
+          "description": "commission: int unsigned"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "first_name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "last_name"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string",
+          "description": "tel"
+        },
+        "wallet": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "payment_limit_date: Japan timezone"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "create_timestamp: Japan timezone"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "update_timestamp: Japan timezone"
+        }
+      },
+      "xml": {
+        "name": "Payment"
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about IDHub",
+    "url": "http://idhub.network"
+  }
+}
