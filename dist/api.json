@@ -33,13 +33,13 @@
     "http"
   ],
   "paths": {
-    "/users/add": {
+    "/users": {
       "post": {
         "tags": [
           "user"
         ],
         "summary": "Create user",
-        "description": "This can only be done by the logged in user.",
+        "description": "",
         "operationId": "createUser",
         "produces": [
           "application/json"
@@ -172,7 +172,7 @@
         "tags": [
           "user"
         ],
-        "summary": "Updated user",
+        "summary": "Update user",
         "description": "This can only be done by the logged in user.",
         "operationId": "updateUser",
         "produces": [
@@ -410,9 +410,6 @@
           "type": "integer",
           "format": "int64"
         },
-        "username": {
-          "type": "string"
-        },
         "firstName": {
           "type": "string",
           "description": "first_name"
@@ -428,13 +425,20 @@
           "type": "string",
           "description": "tel"
         },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "date_of_birth"
+        },
+        "ssn": {
+          "type": "string",
+          "description": "social_security_number"
+        },
         "country": {
           "type": "string"
         },
         "region": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Prefecture number"
+          "type": "string",
+          "description": "state"
         },
         "city": {
           "type": "string",
@@ -448,24 +452,15 @@
           "type": "string",
           "description": "zip_code"
         },
-        "publicKey": {
-          "type": "string"
-        },
-        "wallet": {
-          "type": "string"
-        },
-        "proxy": {
-          "type": "string"
-        },
         "created": {
           "type": "string",
           "format": "date-time",
-          "description": "create_timestamp: Japan timezone"
+          "description": "create_timestamp: Taiwan timezone"
         },
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "updated_timestamp: Japan timezone"
+          "description": "updated_timestamp: Taiwan timezone"
         }
       },
       "xml": {
