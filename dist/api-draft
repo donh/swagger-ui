@@ -212,9 +212,6 @@ definitions:
   User:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
       firstName:
         type: "string"
         description: "first_name"
@@ -253,6 +250,12 @@ definitions:
         type: "string"
         format: "byte"    # base64-encoded file contents
         description: "image of passport"
+      wallet:
+        type: "string"
+        description: "wallet address"
+      did:
+        type: "string"
+        description: "decentralized identifier"
       created:
         type: "string"
         format: "date-time"
@@ -273,7 +276,7 @@ definitions:
       code:
         type: "string"
         description: "activation code: random numbers with lowercase characters. string length: 6"
-      status:
+      valid:
         type: "boolean"
         description: "email activation status"
       created:
